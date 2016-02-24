@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.io.File;
@@ -16,6 +17,8 @@ import java.io.FileNotFoundException;
  */
 public class MainActivity extends Activity{
 
+    private String fileName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -23,7 +26,10 @@ public class MainActivity extends Activity{
     }
 
     public void startMainService(View v){
+        EditText editText = (EditText) findViewById(R.id.nameOfFile);
+        fileName = editText.getText().toString() + ".txt";
         Intent intent = new Intent(this, MainService.class);
+        intent.putExtra("fileName", fileName);
         startService(intent);
     }
 
@@ -36,7 +42,7 @@ public class MainActivity extends Activity{
         int i;
         TextView textView = (TextView) findViewById(R.id.fileContents);
         String message = textView.getText().toString();
-        File file = new File(getFilesDir(), "filename.txt");
+        File file = new File(getFilesDir(), fileName);
     try {
         FileInputStream fileInputStream = new FileInputStream(file);
         while ((i = fileInputStream.read()) != -1) {

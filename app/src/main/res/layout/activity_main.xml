@@ -10,6 +10,13 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter File Name"
+        android:text=""
+        android:id="@+id/nameOfFile"/>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

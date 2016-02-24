@@ -1,7 +1,6 @@
 package lwtech.itad230.location;
 
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -27,17 +26,21 @@ public class MainService extends IntentService
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
 
+    private Intent intent;
     private String mLatitude;
     private String mLongitude;
     private String mLastUpdate;
     private File file;
     private FileOutputStream fileOutputStream;
     private String output;
+    private String fileName;
 
     @Override
     protected void onHandleIntent(Intent intent) {
         mGoogleApiClient.disconnect();
         mGoogleApiClient.connect();
+
+        this.intent = intent;
     }
 
     public MainService(){
@@ -53,12 +56,13 @@ public class MainService extends IntentService
                     .addApi(LocationServices.API)
                     .build();
         }
-
         super.onCreate();
     }
 
     @Override
     public void onDestroy(){
+        mGoogleApiClient.disconnect();
+        super.onDestroy();
     }
 
     @Override
@@ -69,8 +73,9 @@ public class MainService extends IntentService
             return;
         }
 
+        fileName = intent.getStringExtra("fileName");
 
-        file = new File(getFilesDir(), "filename.txt");
+        file = new File(getFilesDir(), fileName);
         mLatitude = (String.valueOf(mLastLocation.getLatitude()));
         mLongitude = (String.valueOf(mLastLocation.getLongitude()));
         mLastUpdate = DateFormat.getTimeInstance().format(new Date());
@@ -104,8 +109,8 @@ public class MainService extends IntentService
 
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setInterval(300000);
+        mLocationRequest.setFastestInterval(300000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
@@ -117,7 +122,6 @@ public class MainService extends IntentService
     public void onLocationChanged(Location location) {
         mLastLocation = location;
 
-        file = new File(getFilesDir(), "filename.txt");
         mLatitude = (String.valueOf(mLastLocation.getLatitude()));
         mLongitude = ( String.valueOf(mLastLocation.getLongitude()));
         mLastUpdate = DateFormat.getTimeInstance().format(new Date());
